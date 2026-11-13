@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Comic, Editorial
+from .models import Comic, Editorial, Reserva
 
 @admin.register(Editorial)
 class EditorialAdmin(admin.ModelAdmin):
@@ -20,3 +20,18 @@ class ComicAdmin(admin.ModelAdmin):
     @admin.display(description="Precio", ordering="precio")
     def precio_clp(self, obj):
         return f"${obj.precio:,}".replace(",", ".")
+       
+@admin.register(Reserva)
+class ReservaAdmin(admin.ModelAdmin):
+    list_display = (
+        "codigo", "comic", "nombre", "rut", "cantidad", "fecha"
+    )
+    list_filter = ("comic",)
+    search_fields = ("nombre", "rut")
+    list_select_related = ("comic",)
+    readonly_fields = ("codigo", "fecha", "precio_unitario")
+    def get_readonly_fields(self, request, obj=None):
+        campos = super().get_readonly_fields(request, obj)
+        if obj:
+            return campos + ("comic", "cantidad")
+        return campos
