@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Tienda de cómics{% endblock %}</title>
+  <style>
+    body {font-family: sans-serif; max-width: 1000px;
+          margin: auto; padding: 20px; line-height: 1.5;}
+    nav {padding: 12px; background: #edf3f7; margin-bottom: 20px;}
+    .grid {display: flex; flex-wrap: wrap; gap: 20px;}
+    article {border: 1px solid #ccc; padding: 15px; width: 240px;}
+    img {max-width: 100%; height: auto;}
+    .errorlist {color: #a00020;}
+    input, select, button {padding: 7px; max-width: 100%;}
+  </style>
+</head>
+<body> <nav>
+    <a href="{% url 'catalogo:inicio' %}">Catálogo</a>
+    <a href="{% url 'admin:index' %}">Administración</a>
+  </nav>
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>
