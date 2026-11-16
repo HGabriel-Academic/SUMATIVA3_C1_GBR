@@ -1,0 +1,19 @@
+{% extends "catalogo/base.html" %}
+{% load moneda %}
+{% block title %}{{ comic.titulo }}{% endblock %}
+{% block content %}
+
+<h1>{{ comic.titulo }}</h1>
+<img src="{{ comic.portada.url }}" alt="Portada de {{ comic.titulo }}"
+     width="300">
+<dl>
+  <dt>Editorial</dt><dd>{{ comic.editorial }}</dd>
+  <dt>Precio</dt><dd>{{ comic.precio|clp }}</dd>
+  <dt>Tomo</dt><dd>{{ comic.numero_tomo }}</dd>
+  <dt>Tapa dura</dt><dd>{{ comic.tapa_dura|yesno:"Sí,No" }}</dd>
+  <dt>Stock</dt><dd>{{ comic.stock }}</dd>
+  <dt>Disponible</dt><dd>{{ comic.disponible|yesno:"Sí,No" }}</dd>
+  <dt>Descripción</dt><dd>{{ comic.descripcion|linebreaksbr }}</dd>
+</dl>
+{% if comic.stock == 0 %}<p>Agotado</p>{% endif %}
+{% endblock %}

@@ -25,6 +25,7 @@
 <div class="grid">
   {% for comic in comics %}
   <article>
+    <a href="{% url 'catalogo:detalle' comic.pk %}">Ver detalle</a>
     <img src="{{ comic.portada.url }}" alt="Portada de {{ comic.titulo }}">
     <h2>{{ comic.titulo }}</h2>
     <p>{{ comic.editorial }}</p>

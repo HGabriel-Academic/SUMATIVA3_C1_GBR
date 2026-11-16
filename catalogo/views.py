@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Comic,Editorial
+from django.shortcuts import get_object_or_404
 
 def catalogo(request):
     q = request.GET.get("q", "").strip()
@@ -24,3 +25,10 @@ def catalogo(request):
         "q": q,
         "editorial_id": editorial_id,
     })
+    
+def detalle(request, pk):
+    comic = get_object_or_404(
+    Comic.objects.select_related("editorial"),
+    pk=pk, disponible=True,
+    )
+    return render(request, "catalogo/detalle.html", {"comic": comic})
