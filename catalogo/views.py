@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Comic,Editorial
 from django.shortcuts import get_object_or_404
+from .forms import ReservaForm
 
 def catalogo(request):
     q = request.GET.get("q", "").strip()
@@ -32,3 +33,12 @@ def detalle(request, pk):
     pk=pk, disponible=True,
     )
     return render(request, "catalogo/detalle.html", {"comic": comic})
+
+def reservar(request, pk):
+    comic = get_object_or_404(Comic, pk=pk, disponible=True)
+    form = ReservaForm(request.POST if request.method == "POST" else None)
+    if request.method == "POST" and form.is_valid():
+        form.add_error(None, "Formulario válido. Guardado pendiente de etapa 12.")
+    return render(request, "catalogo/reservar.html", {
+        "comic": comic, "form": form,
+    })

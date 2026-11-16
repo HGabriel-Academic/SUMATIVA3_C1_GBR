@@ -16,4 +16,7 @@
   <dt>Descripción</dt><dd>{{ comic.descripcion|linebreaksbr }}</dd>
 </dl>
 {% if comic.stock == 0 %}<p>Agotado</p>{% endif %}
+{% if comic.stock > 0 %}
+<a href="{% url 'catalogo:reservar' comic.pk %}">Reservar</a>
+{% endif %}
 {% endblock %}

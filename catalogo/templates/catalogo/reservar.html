@@ -1,0 +1,20 @@
+{% extends "catalogo/base.html" %}
+{% block content %}
+<h1>Reservar {{ comic.titulo }}</h1>
+<p>Ejemplares disponibles: {{ comic.stock }}</p>
+{% if comic.stock > 0 %}
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+  <p>
+    {{ field.label_tag }} {{ field }}
+    {{ field.errors }}
+  </p>
+  {% endfor %}
+  <button type="submit">Confirmar reserva</button>
+  </form>
+{% else %}
+<p>Agotado. No se pueden hacer reservas.</p>
+{% endif %}
+{% endblock %}
