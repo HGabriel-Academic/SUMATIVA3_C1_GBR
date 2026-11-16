@@ -2,6 +2,26 @@
 {% load moneda %}
 {% block content %}
 <h1>Catálogo de cómics</h1>
+
+<form method="get">
+  <label for="q">Título</label>
+  <input id="q" name="q" value="{{ q }}" placeholder="Buscar título">
+  <label for="editorial">Editorial</label>
+  <select id="editorial" name="editorial">
+    <option value="">Todas</option>
+    {% for editorial in editoriales %}
+    <option value="{{ editorial.pk }}"
+      {% if editorial_id == editorial.pk|stringformat:"s" %}
+        selected
+{% endif %}>
+      {{ editorial.nombre }}
+    </option>
+    {% endfor %}
+  </select>
+  <button type="submit">Buscar</button>
+  <a href="{% url 'catalogo:inicio' %}">Limpiar</a>
+</form>
+
 <div class="grid">
   {% for comic in comics %}
   <article>
