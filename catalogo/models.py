@@ -3,6 +3,9 @@ from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
 from .validators import validar_rut
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.db.models import F
 
 class Editorial(models.Model):
     nombre = models.CharField("nombre", max_length=100, unique=True)
@@ -63,3 +66,39 @@ class Reserva(models.Model):
         return self.precio_unitario * self.cantidad
     def __str__(self):
         return f"{self.codigo} - {self.nombre}"
+    def clean(self):
+        super().clean()
+        if not self._state.adding:
+            return
+        if not self.comic_id or self.cantidad is None:
+            return
+        comic = Comic.objects.filter(pk=self.comic_id).first()
+        if comic is None:
+            return  # La validación de ForeignKey informará el error.
+        if not comic.disponible:
+            raise ValidationError("Este cómic no está disponible.")
+        if self.cantidad > comic.stock:
+            raise ValidationError(
+                f"Solo hay {comic.stock} ejemplares disponibles."
+    )
+    def save(self, *args, **kwargs):
+        if not self._state.adding:
+            return super().save(*args, **kwargs)
+        with transaction.atomic():
+            self.full_clean()
+            actualizados = Comic.objects.filter(
+                pk=self.comic_id,
+                disponible=True,
+                stock__gte=self.cantidad,
+            ).update(stock=F("stock") - self.cantidad)
+            if actualizados != 1:
+                stock = Comic.objects.filter(
+                    pk=self.comic_id
+                ).values_list("stock", flat=True).first()
+                raise ValidationError(
+                    f"No se pudo reservar. Stock disponible: {stock or 0}."
+                )
+            self.precio_unitario = Comic.objects.values_list(
+                "precio", flat=True
+            ).get(pk=self.comic_id)
+            return super().save(*args, **kwargs)

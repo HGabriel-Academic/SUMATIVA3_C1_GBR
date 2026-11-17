@@ -2,6 +2,8 @@ from django.shortcuts import render
 from .models import Comic,Editorial
 from django.shortcuts import get_object_or_404
 from .forms import ReservaForm
+from django.core.exceptions import ValidationError
+from django.shortcuts import redirect
 
 def catalogo(request):
     q = request.GET.get("q", "").strip()
@@ -37,8 +39,20 @@ def detalle(request, pk):
 def reservar(request, pk):
     comic = get_object_or_404(Comic, pk=pk, disponible=True)
     form = ReservaForm(request.POST if request.method == "POST" else None)
-    if request.method == "POST" and form.is_valid():
-        form.add_error(None, "Formulario válido. Guardado pendiente de etapa 12.")
+    if request.method == "POST":
+        if comic.stock == 0:
+            form.add_error(None, "Agotado. No se pueden hacer reservas.")
+        elif form.is_valid():
+            reserva = form.save(commit=False)
+            reserva.comic = comic
+            try:
+                reserva.save()
+            except ValidationError as error:
+                form.add_error(None, "; ".join(error.messages))
+            else:
+                # Temporal; en etapa 13 se redirige al comprobante.
+                return redirect("catalogo:detalle", pk=comic.pk)
+        comic.refresh_from_db()
     return render(request, "catalogo/reservar.html", {
         "comic": comic, "form": form,
-    })
+})
