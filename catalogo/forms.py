@@ -1,6 +1,5 @@
 from django import forms
 from .models import Reserva
-
 class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
@@ -11,6 +10,10 @@ class ReservaForm(forms.ModelForm):
                 attrs={"placeholder": "12.345.678-5"}
             ),
 }
+        
+    def clean_rut(self):
+        return self.cleaned_data["rut"].strip().upper()
+
     def clean_nombre(self):
         nombre = self.cleaned_data["nombre"].strip()
         if not nombre:

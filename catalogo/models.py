@@ -2,6 +2,7 @@ import uuid
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from django.db import models
+from .validators import validar_rut
 
 class Editorial(models.Model):
     nombre = models.CharField("nombre", max_length=100, unique=True)
@@ -46,7 +47,7 @@ class Reserva(models.Model):
     )
     nombre = models.CharField(max_length=120)
     correo = models.EmailField()
-    rut = models.CharField("RUT", max_length=12)
+    rut = models.CharField("RUT", max_length=12, validators=[validar_rut])
     cantidad = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(3)]
     )
