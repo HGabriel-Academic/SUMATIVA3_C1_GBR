@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from .forms import ReservaForm
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
+from .models import Reserva
 
 def catalogo(request):
     q = request.GET.get("q", "").strip()
@@ -50,9 +51,16 @@ def reservar(request, pk):
             except ValidationError as error:
                 form.add_error(None, "; ".join(error.messages))
             else:
-                # Temporal; en etapa 13 se redirige al comprobante.
-                return redirect("catalogo:detalle", pk=comic.pk)
+                return redirect("catalogo:comprobante", codigo=reserva.codigo)
         comic.refresh_from_db()
     return render(request, "catalogo/reservar.html", {
         "comic": comic, "form": form,
+})
+
+def comprobante(request, codigo):
+    reserva = get_object_or_404(
+        Reserva.objects.select_related("comic"), codigo=codigo
+    )
+    return render(request, "catalogo/comprobante.html", {
+        "reserva": reserva,
 })

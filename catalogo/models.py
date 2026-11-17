@@ -61,7 +61,8 @@ class Reserva(models.Model):
     precio_unitario = models.PositiveIntegerField(default=0)
     class Meta:
         ordering = ["-fecha"]
-    @property
+    
+    @property 
     def total(self):
         return self.precio_unitario * self.cantidad
     def __str__(self):

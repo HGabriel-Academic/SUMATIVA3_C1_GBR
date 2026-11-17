@@ -1,0 +1,15 @@
+{% extends "catalogo/base.html" %}
+{% load moneda tz %}
+{% block content %}
+<h1>Reserva confirmada</h1>
+<p>Código: {{ reserva.codigo }}</p>
+<p>Cómic: {{ reserva.comic }}</p>
+<p>Nombre: {{ reserva.nombre }}</p>
+<p>RUT: {{ reserva.rut }}</p>
+<p>Cantidad: {{ reserva.cantidad }}</p>
+<p>Total: {{ reserva.total|clp }}</p>
+<p>Fecha y hora:
+  {{ reserva.fecha|localtime|date:"d/m/Y H:i" }}
+</p>
+<a href="{% url 'catalogo:inicio' %}">Volver al catálogo</a>
+{% endblock %}
